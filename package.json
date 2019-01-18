@@ -1,0 +1,31 @@
+{
+  "name": "web_api",
+  "version": "1.0.0",
+  "description": "API Final Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jamalfazlur/final_project_web_api.git"
+  },
+  "keywords": [
+    "final",
+    "project",
+    "react",
+    "mysql"
+  ],
+  "author": "jamalfazlur",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jamalfazlur/final_project_web_api/issues"
+  },
+  "homepage": "https://github.com/jamalfazlur/final_project_web_api#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "mysql": "github:mysqljs/mysql"
+  }
+}
