@@ -1,8 +1,12 @@
 create database semalamsuntuk;
 use semalamsuntuk;
 
+-- unverified;
+
 insert into users (username, password, email, phone) values ('rahman','1234','rahman.jamal@gmail.com','0885778444888');
 select * from users;
+
+Update users set status='Unverified' where id=3;
 
 update users set password='d1f6a1074838becdc9231fc69a1a0247dd1d64a46ba7ba7d629f404f0201df11' where username = 'rahman';
 
