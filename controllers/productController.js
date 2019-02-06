@@ -2,7 +2,7 @@ const conn = require('../database');
 
 module.exports = {
     getproduct: (req,res) => {
-        var {isbn, keyword} = req.body;
+        var {isbn = "", keyword = ""} = req.body;
 
         var splitString = (strSearch) => {
             var result = strSearch.split(' ');
@@ -10,6 +10,7 @@ module.exports = {
         }
         var resKeyword = splitString(keyword).join('|');
         console.log(resKeyword);
+        if(resKeyword == "") {resKeyword = "|"}
 
         var sql = `SELECT isbn, judul, PN.nama AS penulis, PB.nama AS kategori, harga, berat, jumlah_halaman, deskripsi, gambar 
                     FROM buku B
