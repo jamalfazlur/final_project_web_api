@@ -34,7 +34,7 @@ module.exports = {
 
                     var linkVerifikasi = `http://localhost:3000/verified?username=${username}&password=${hashPassword}`;
                     var mailOptions = {
-                        from: 'No-Reply <fazlur.jamal@gmail.com>',
+                        from: 'No Reply <fazlur.jamal@gmail.com>',
                         to : email,
                         subject : 'Email Verifikasi',
                         html: `Silahkan Klik Link Berikut Untuk Verifikasi: <a href="${linkVerifikasi}">Verifikasi Saya</a>`
