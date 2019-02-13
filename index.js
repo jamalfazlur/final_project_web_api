@@ -13,9 +13,10 @@ app.get('/', (req,res) => {
     res.send('<h1>Selamat Datang di API!</h1>')
 })
 
-const { authRouter, productRouter } = require('./routers');
+const { authRouter, productRouter, transactionRouter } = require('./routers');
 
 app.use('/auth', authRouter);
 app.use('/product', productRouter);
+app.use('/transaction', transactionRouter);
 
 app.listen(port, () => console.log('API Aktif di port ' + port))
