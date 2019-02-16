@@ -1,4 +1,5 @@
 var Crypto = require('crypto');
+var moment = require('moment');
 const conn = require('../database');
 const transporter = require('../helpers/emailSender');
 
@@ -67,6 +68,29 @@ module.exports = {
             if(err) throw err;
             //console.log(`Hash: ${hash}, Hash2: ${hash2}`)
             console.log(req.body)
+            console.log(result);
+            //var lastlogin = moment().format('YYYY-MM-DD HH:mm:ss');
+            var updateLogin = {
+                lastlogin: new Date()
+            }
+            var sql2 = `UPDATE users SET ? WHERE username='${username}';`;
+            conn.query(sql2, updateLogin, (err, result2) => {
+                if (err) throw err;
+                console.log(result2);
+            }) 
+
+            res.send(result);
+        })
+    },
+    keeplogin: (req,res) => {
+
+        var { username } = req.body;
+
+        var sql = `SELECT * FROM users WHERE username = '${username}';`;
+        conn.query(sql, (err, result) => {
+            if(err) throw err;
+            console.log(req.body)
+            console.log(result);
             res.send(result);
         })
     },

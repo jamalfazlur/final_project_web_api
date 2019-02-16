@@ -116,3 +116,59 @@ WHERE nama LIKE '%pengembangan%'
 select * from buku order by 1 
 limit 3, 1
 ;
+
+
+
+
+SELECT * FROM keranjang
+WHERE username = 'wedya'
+;
+DESC keranjang;
+DESC buku;
+
+SELECT * FROM users 
+-- WHERE lastlogin BETWEEN '2019-02-06 00:00:00' AND '2019-02-11 23:59:59'
+;
+
+UPDATE users SET role='User' WHERE username='jamal';
+
+UPDATE users SET lastlogin=null WHERE username='jamal';
+
+SELECT NOW();
+
+DESC users;
+
+-- 2019-02-16 21:24:42
+
+SELECT * FROM keranjang;
+-- TRUNCATE keranjang;
+
+
+CREATE TABLE transaksi (
+	id_transaksi INT NOT NULL AUTO_INCREMENT ,
+	username VARCHAR(45) NOT NULL,
+	waktu DATETIME NOT NULL,
+	total_bayar INT NOT NULL,
+	is_finished VARCHAR(3) NOT NULL,
+	PRIMARY KEY (id_transaksi)
+	
+);
+
+DESC transaksi;
+
+CREATE TABLE detil_transaksi (
+	id_transaksi INT NOT NULL,
+	username VARCHAR(45) NOT NULL,
+	isbn VARCHAR(13) NOT NULL,
+	judul VARCHAR(100),
+	harga INT,
+	jumlah_beli INT,
+	total_harga	INT
+);
+DESC detil_transaksi;
+
+SELECT K.username, K.isbn, K.judul, K.harga, K.berat, K.jumlah_beli, K.total_harga, B.gambar FROM keranjang K
+JOIN buku B 
+ON K.isbn = B.isbn
+WHERE username='jamal';
+
