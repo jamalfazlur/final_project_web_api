@@ -39,11 +39,64 @@ module.exports = {
             res.send(result);
         })
     },
+    
     deleteitemcart: (req,res) => {
         var { username, isbn } = req.body;
         
         var sql = `DELETE FROM keranjang WHERE username = '${username}' AND isbn = '${isbn}';`;
         
+        conn.query(sql, (err, result) => {
+            if(err) throw err;
+            console.log(sql);
+            console.log(result)
+            res.send(result);
+        })
+    },
+
+    addtransaction: (req, res) => {
+        var { username, total_bayar, total_berat } = req.body;
+
+        var sql = `INSERT INTO transaksi SET ?;`;
+        var newTransaction = {
+            username,
+            waktu : new Date(),
+            total_bayar, 
+            total_berat,
+            is_finished: "no"
+        }
+        conn.query(sql, newTransaction, (err, result) => {
+            if(err) throw err;
+            console.log(sql);
+            console.log(result.insertId)
+            res.send(result);
+        })
+    },
+    adddetailtransaction: (req, res) => {
+        
+        var { id_transaksi, username, isbn, judul, harga, jumlah_beli, total_harga } = req.body;
+
+        var newDetail = {
+            id_transaksi,
+            username,
+            isbn,
+            judul,
+            harga,
+            jumlah_beli,
+            total_harga
+        }
+
+        var sql = `INSERT INTO detil_transaksi SET ?;`;
+
+        conn.query(sql, newDetail, (err, result) => {
+            if(err) throw err;
+            console.log(sql);
+            console.log(result)
+            res.send(result);
+        })
+    },
+    clearcart: (req, res) => {
+        var sql = `DELETE FROM keranjang WHERE username = '${req.body.username}';`;
+
         conn.query(sql, (err, result) => {
             if(err) throw err;
             console.log(sql);
