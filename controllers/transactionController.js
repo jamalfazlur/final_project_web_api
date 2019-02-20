@@ -1,5 +1,7 @@
 const conn = require('../database');
 const transporter = require('../helpers/emailSender');
+var fs = require('fs');
+var { uploader } = require('../helpers/uploader');
 
 module.exports = { 
 
@@ -81,7 +83,7 @@ module.exports = {
                         <p>Total Pembayaran: Rp. ${total_bayar.toLocaleString()}</p>
                         <p>Transfer Ke: (BNI) 12345678123</p>
                         <h4>Setelah melakukan transfer, harap <b>upload bukti pembayaran</b> di Halaman :</h4> 
-                        <a href="http://localhost:3000/confirmpayment">Konfirmasi Pembayaran</a>`
+                        <a href="http://localhost:3000/confirmpayment?username=${username}&idtransaksi=${result.insertId}">Konfirmasi Pembayaran</a>`
             }
 
             transporter.sendMail(mailOptions, (err2, res2) => {
@@ -133,6 +135,7 @@ module.exports = {
             res.send(result);
         })
     },
+    // =========================================================================================================================
     countcart: (req, res) => {
         var sql = `SELECT COUNT(*) AS count FROM keranjang WHERE username='${req.body.username}';`;
         conn.query(sql, (err, result) => {
@@ -140,6 +143,72 @@ module.exports = {
             console.log(sql);
             console.log(result[0].count)
             res.send(result[0]);
+        })
+    },
+    confirmpayment: (req,res) => {
+        try {
+            const path = '/images/transaction/'; //file save path
+            const upload = uploader(path, 'PAY').fields([{ name: 'image'}]); //uploader(path, 'default prefix')
+    
+            upload(req, res, (err) => {
+                if(err){
+                    return res.status(500).json({ message: 'Upload picture failed !', error: err.message });
+                }
+    
+                const { image } = req.files;
+                console.log(image)
+                const imagePath = image ? path + '/' + image[0].filename : null;
+                console.log(imagePath)
+    
+                console.log(req.body.data)
+                req.body.data.waktu = new Date();
+                const data = JSON.parse(req.body.data);
+                console.log(data)
+                data.image = imagePath;                
+                
+                var sql = 'INSERT INTO payment SET ?';
+                conn.query(sql, data, (err, results) => {
+                    console.log(data)
+                    if(err) {
+                        console.log(err.message)
+                        fs.unlinkSync('./public' + imagePath);
+                        return res.status(500).json({ message: "There's an error on the server. Please contact the administrator.", error: err.message });
+                    }
+                   
+                    console.log(results);
+                    sql = 'SELECT * from payment;';
+                    conn.query(sql, (err, results) => {
+                        if(err) {
+                            console.log(err.message);
+                            return res.status(500).json({ message: "There's an error on the server. Please contact the administrator.", error: err.message });
+                        }
+                        console.log(results);
+                        
+                        res.send(results);
+                    })   
+                })    
+            })
+        } catch(err) {
+            return res.status(500).json({ message: "There's an error on the server. Please contact the administrator.", error: err.message });
+        }
+    },
+
+    getlistpayment: (req, res) => {
+        var sql = `SELECT 
+                        TR.id_transaksi, TR.username, TR.waktu AS waktu_transaksi, 
+                        TR.total_bayar, TR.total_berat, TR.is_finished, PY.waktu AS waktu_konfirmasi, PY.image 
+                    FROM transaksi TR
+                    LEFT JOIN payment PY
+                    ON TR.id_transaksi = PY.id_transaksi
+                    WHERE TR.username = '${req.body.username}' 
+                    AND TR.is_finished = 'no'
+                    AND PY.image IS NULL 
+                    ORDER BY waktu_konfirmasi;`;
+        conn.query(sql, (err, result) => {
+            if(err) throw err;
+            console.log(sql);
+            console.log(result)
+            res.send(result);
         })
     }
 }

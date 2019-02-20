@@ -10,5 +10,7 @@ router.post('/addtransaction', transactionController.addtransaction);
 router.post('/adddetailtransaction', transactionController.adddetailtransaction);
 router.post('/clearcart', transactionController.clearcart);
 router.post('/countcart', transactionController.countcart);
+router.post('/confirmpayment', transactionController.confirmpayment);
+router.post('/getlistpayment', transactionController.getlistpayment);
 
 module.exports = router;
