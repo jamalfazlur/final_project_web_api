@@ -1,4 +1,6 @@
 const conn = require('../database');
+var fs = require('fs');
+var { uploader } = require('../helpers/uploader');
 
 module.exports = {
     getproduct: (req,res) => {
@@ -36,7 +38,51 @@ module.exports = {
         })
     },
     addproduct: (req,res) => {
-
+        try {
+            const path = '/images/book'; //file save path
+            const upload = uploader(path, 'PRD').fields([{ name: 'gambar'}]); //uploader(path, 'default prefix')
+    
+            upload(req, res, (err) => {
+                if(err){
+                    return res.status(500).json({ message: 'Upload picture failed !', error: err.message });
+                }
+    
+                const { gambar } = req.files;
+                console.log(gambar)
+                const imagePath = gambar ? path + '/' + gambar[0].filename : null;
+                console.log(imagePath)
+    
+                console.log(req.body.data)
+                req.body.data.input_date = new Date();
+                const data = JSON.parse(req.body.data);
+                console.log(data)
+                data.gambar = imagePath;                
+                
+                var sql = 'INSERT INTO buku SET ?';
+                conn.query(sql, data, (err, results) => {
+                    console.log(data)
+                    if(err) {
+                        console.log(err.message)
+                        fs.unlinkSync('./public' + imagePath);
+                        return res.status(500).json({ message: "There's an error on the server. Please contact the administrator.", error: err.message });
+                    }
+                   
+                    console.log(results);
+                    sql = 'SELECT * from buku;';
+                    conn.query(sql, (err, results) => {
+                        if(err) {
+                            console.log(err.message);
+                            return res.status(500).json({ message: "There's an error on the server. Please contact the administrator.", error: err.message });
+                        }
+                        console.log(results);
+                        
+                        res.send(results);
+                    })   
+                })    
+            })
+        } catch(err) {
+            return res.status(500).json({ message: "There's an error on the server. Please contact the administrator.", error: err.message });
+        }
     },
     deleteproduct: (req,res) => {
         
