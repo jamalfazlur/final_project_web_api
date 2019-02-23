@@ -147,7 +147,7 @@ module.exports = {
     },
     confirmpayment: (req,res) => {
         try {
-            const path = '/images/transaction/'; //file save path
+            const path = '/images/transaction'; //file save path
             const upload = uploader(path, 'PAY').fields([{ name: 'image'}]); //uploader(path, 'default prefix')
     
             upload(req, res, (err) => {
@@ -192,7 +192,7 @@ module.exports = {
             return res.status(500).json({ message: "There's an error on the server. Please contact the administrator.", error: err.message });
         }
     },
-
+    // untuk user - di halaman konfirmasi pembayaran / upload bukti
     getlistpayment: (req, res) => {
         var sql = `SELECT 
                         TR.id_transaksi, TR.username, TR.waktu AS waktu_transaksi, 
@@ -204,6 +204,34 @@ module.exports = {
                     AND TR.is_finished = 'no'
                     AND PY.image IS NULL 
                     ORDER BY waktu_konfirmasi;`;
+        conn.query(sql, (err, result) => {
+            if(err) throw err;
+            console.log(sql);
+            console.log(result)
+            res.send(result);
+        })
+    },
+    // untuk admin: get list -> Data order untuk diverifikasi
+    getlisttoverify: (req, res) => {
+        var sql = `SELECT 
+                        TR.id_transaksi, TR.username, TR.waktu AS waktu_transaksi, TR.total_bayar, TR.total_berat, TR.is_finished, 
+                        PY.waktu AS waktu_konfirmasi, PY.image
+                    FROM transaksi TR
+                    LEFT JOIN  payment PY
+                    ON PY.id_transaksi = TR.id_transaksi
+                    WHERE PY.image IS NOT NULL 
+                    AND TR.is_finished = 'no'
+                    ORDER BY waktu_konfirmasi`;
+        conn.query(sql, (err, result) => {
+            if(err) throw err;
+            console.log(sql);
+            console.log(result)
+            res.send(result);
+        })
+    },
+    // approve payment dari buyer
+    approvepayment: (req, res) => {
+        var sql = `UPDATE transaksi SET is_finished = 'yes' WHERE id_transaksi = ${req.body.id_transaksi};`;
         conn.query(sql, (err, result) => {
             if(err) throw err;
             console.log(sql);

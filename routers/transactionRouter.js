@@ -12,5 +12,7 @@ router.post('/clearcart', transactionController.clearcart);
 router.post('/countcart', transactionController.countcart);
 router.post('/confirmpayment', transactionController.confirmpayment);
 router.post('/getlistpayment', transactionController.getlistpayment);
+router.post('/ordertoverify', transactionController.getlisttoverify);
+router.post('/approvepayment', transactionController.approvepayment);
 
 module.exports = router;
