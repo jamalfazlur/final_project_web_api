@@ -210,7 +210,33 @@ module.exports = {
             console.log(result)
             res.send(result);
         })
+    }, 
+    gethistorytrx: (req,res) => {
+        var sql = `SELECT * FROM transaksi WHERE username='${req.body.username}' AND is_finished='yes';`;
+
+        conn.query(sql, (err, result) => {
+            if(err) throw err;
+            console.log(sql);
+            console.log(result)
+            res.send(result);
+        })
     },
+    gethistorydetail: (req,res) => {
+        var sql = `SELECT DT.id_transaksi, DT.username, DT.isbn, DT.judul, DT.harga, DT.jumlah_beli, DT.total_harga, B.gambar 
+                    FROM detil_transaksi DT
+                    JOIN buku B
+                    ON DT.isbn = B.isbn
+                    WHERE DT.id_transaksi = ${req.body.id_transaksi};`;
+        conn.query(sql, (err, result) => {
+            if(err) throw err;
+            console.log(sql);
+            console.log(result)
+            res.send(result);
+        })
+    },
+
+    // ====================== ADMIN =======================================
+
     // untuk admin: get list -> Data order untuk diverifikasi
     getlisttoverify: (req, res) => {
         var sql = `SELECT 
